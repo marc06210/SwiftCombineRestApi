@@ -27,6 +27,12 @@ class PostApiViewModel: ObservableObject {
         print("fetchData")
         
         let postRetriever = URLSession.shared.dataTaskPublisher(for: url)
+            .map(\.data)
+            .decode(type: [PostStore.Post].self, decoder: JSONDecoder())
+            .flatMap { $0.publisher }
+            .filter { $0.id%2==0 }
+            .collect()
+            .receive(on: DispatchQueue.main)
         
         task?.cancel()
         
@@ -39,11 +45,7 @@ class PostApiViewModel: ObservableObject {
             }
         } receiveValue: { response in
             print("receiveValue: \(response)")
-            guard let posts = try? JSONDecoder().decode([PostStore.Post].self, from: response.data) else { return }
-            DispatchQueue.main.async {
-                self.data = PostStore(posts: posts)
-            }
+            self.data = PostStore(posts: response)
         }
-
     }
 }
