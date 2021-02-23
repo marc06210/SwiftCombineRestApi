@@ -57,12 +57,12 @@
 			isa = PBXGroup;
 			children = (
 				4949DBBC25E3F38B00D70143 /* TestApiApp.swift */,
+				4949DBD025E3F89D00D70143 /* PostApiViewModel.swift */,
 				4949DBBE25E3F38B00D70143 /* ListOfPostsView.swift */,
 				4949DBCD25E3F3E900D70143 /* PostModel.swift */,
 				4949DBC025E3F38E00D70143 /* Assets.xcassets */,
 				4949DBC525E3F38E00D70143 /* Info.plist */,
 				4949DBC225E3F38E00D70143 /* Preview Content */,
-				4949DBD025E3F89D00D70143 /* PostApiViewModel.swift */,
 			);
 			path = TestApi;
 			sourceTree = "<group>";

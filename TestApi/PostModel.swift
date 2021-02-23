@@ -21,7 +21,7 @@ struct PostStore {
         self.posts.append(element)
     }
     
-    struct Post: Identifiable {
+    struct Post: Identifiable, Decodable {
         var id: Int
         var title: String
         var body: String

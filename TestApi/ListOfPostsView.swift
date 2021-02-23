@@ -26,6 +26,9 @@ struct ListOfPostsView: View {
                 }
             }
         }
+        .onAppear {
+            allPosts.fetchData()
+        }
     }
 }
 
