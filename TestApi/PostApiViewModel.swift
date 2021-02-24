@@ -9,17 +9,17 @@ import Foundation
 import Combine
 
 class PostApiViewModel: ObservableObject {
-    @Published private var data: PostStore
+    @Published private var data: [Post]
     private let url = URL(string: "https://jsonplaceholder.typicode.com/posts")!
     private var task: AnyCancellable? = nil
     
-    init(_ posts: [PostStore.Post]) {
-        self.data = PostStore(posts: posts)
+    init(_ posts: [Post]) {
+        self.data = posts
     }
     
     // MARK: - data access
-    func getposts() -> Array <PostStore.Post> {
-        data.posts
+    func getposts() -> Array <Post> {
+        data
     }
     
     // MARK - intent
@@ -28,24 +28,23 @@ class PostApiViewModel: ObservableObject {
         
         let postRetriever = URLSession.shared.dataTaskPublisher(for: url)
             .map(\.data)
-            .decode(type: [PostStore.Post].self, decoder: JSONDecoder())
+            .decode(type: [Post].self, decoder: JSONDecoder())
             .flatMap { $0.publisher }
             .filter { $0.id%2==0 }
+            .map { post -> Post in
+                return Post(id: post.id, title: "MGU>>>"+post.title, body: post.body)
+            }
             .collect()
-            .receive(on: DispatchQueue.main)
-        
+            .replaceError(with: [])
+            
         task?.cancel()
         
-        task = postRetriever.sink { completion in
-            switch(completion) {
-            case .failure(let error):
-                print("error: \(error.localizedDescription)")
-            case .finished:
-                break
+        task = postRetriever
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] posts in
+                if !posts.isEmpty {
+                    self?.data = posts
+                }
             }
-        } receiveValue: { response in
-            print("receiveValue: \(response)")
-            self.data = PostStore(posts: response)
-        }
     }
 }
